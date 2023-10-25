@@ -196,9 +196,16 @@ def update(update: Update, context: CallbackContext) -> None:
                 return
 
         # Update character with given ID
-        result = collection.find_one_and_update({'id': args[0]}, {'$set': {field: value}})
+        result = collection.find_one_and_update({'id': args[0]}, {'$set': {field: value}}, return_document=ReturnDocument.AFTER)
 
         if result:
+            # Update message in channel
+            context.bot.edit_message_caption(
+                chat_id='-1001915956222',
+                message_id=result['message_id'],
+                caption=f'<b>Character Name:</b> {result["name"]}\n<b>Anime Name:</b> {result["anime"]}\n<b>Rarity:</b> {result["rarity"]}\n<b>ID:</b> {result["id"]}\nAdded by <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a>',
+                parse_mode='HTML'
+            )
             update.message.reply_text('Successfully updated.')
         else:
             update.message.reply_text('No character found with given ID.')
