@@ -12,8 +12,9 @@ import random
 from datetime import datetime, timedelta
 from threading import Lock
 import time
-
+import pyrogram
 from Botttt import dispatcher,updater
+from Botttt import pbot 
 from Botttt.modules import ALL_MODULES
 client = MongoClient('mongodb+srv://animedatabaseee:BFm9zcCex7a94Vuj@cluster0.zyi6hqg.mongodb.net/?retryWrites=true&w=majority')
 db = client['Waifus_lol']
@@ -759,3 +760,4 @@ def main() -> None:
     
 if __name__ == '__main__':
     main()
+    pbot.start()
