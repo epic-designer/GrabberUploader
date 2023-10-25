@@ -118,8 +118,8 @@ def upload(update: Update, context: CallbackContext) -> None:
     try:
         # Extract arguments
         args = context.args
-        if len(args) != 3:
-            update.message.reply_text('Incorrect format. Please use: /upload img_url Character-Name Anime-Name')
+        if len(args) != 4:
+            update.message.reply_text('Incorrect format. Please use: /upload img_url Character-Name Anime-Name Rarity')
             return
 
         # Replace '-' with ' ' in character name and convert to title case
@@ -133,6 +133,14 @@ def upload(update: Update, context: CallbackContext) -> None:
             update.message.reply_text('Invalid image URL.')
             return
 
+        # Check if rarity is valid
+        rarity_map = {1: "⚪ Common", 2: "🟣 Rare", 3: "🟡 Legendary", 4: "🟢 Medium"}
+        try:
+            rarity = rarity_map[int(args[3])]
+        except KeyError:
+            update.message.reply_text('Invalid rarity. Please use 1, 2, 3, or 4.')
+            return
+
         # Generate ID
         id = str(get_next_sequence_number('character_id')).zfill(4)
 
@@ -141,6 +149,7 @@ def upload(update: Update, context: CallbackContext) -> None:
             'img_url': args[0],
             'name': character_name,
             'anime': anime,
+            'rarity': rarity,
             'id': id
         }
         
@@ -148,7 +157,7 @@ def upload(update: Update, context: CallbackContext) -> None:
         message = context.bot.send_photo(
             chat_id='-1001915956222',
             photo=args[0],
-            caption=f'<b>Character Name:</b> {character_name}\n<b>Anime Name:</b> {anime}\n<b>ID:</b> {id}\nAdded by <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a>',
+            caption=f'<b>Character Name:</b> {character_name}\n<b>Anime Name:</b> {anime}\n<b>Rarity:</b> {rarity}\n<b>ID:</b> {id}\nAdded by <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a>',
             parse_mode='HTML'
         )
 
@@ -159,6 +168,42 @@ def upload(update: Update, context: CallbackContext) -> None:
         update.message.reply_text('Successfully uploaded.')
     except Exception as e:
         update.message.reply_text('Unsuccessfully uploaded.')
+        
+def update(update: Update, context: CallbackContext) -> None:
+    # Check if user is a sudo user
+    if str(update.effective_user.id) not in sudo_users:
+        update.message.reply_text('You do not have permission to use this command.')
+        return
+
+    try:
+        # Extract arguments
+        args = context.args
+        if len(args) < 3:
+            update.message.reply_text('Incorrect format. Please use: /update ID Field Value')
+            return
+
+        # Get the field and value to update
+        field = args[1]
+        value = ' '.join(args[2:])
+
+        # Check if rarity is being updated
+        if field.lower() == 'rarity':
+            rarity_map = {1: "⚪ Common", 2: "🟣 Rare", 3: "🟡 Legendary", 4: "🟢 Medium"}
+            try:
+                value = rarity_map[int(value)]
+            except KeyError:
+                update.message.reply_text('Invalid rarity. Please use 1, 2, 3, or 4.')
+                return
+
+        # Update character with given ID
+        result = collection.find_one_and_update({'id': args[0]}, {'$set': {field: value}})
+
+        if result:
+            update.message.reply_text('Successfully updated.')
+        else:
+            update.message.reply_text('No character found with given ID.')
+    except Exception as e:
+        update.message.reply_text('Failed to update character.')
 
 def delete(update: Update, context: CallbackContext) -> None:
     # Check if user is a sudo user
