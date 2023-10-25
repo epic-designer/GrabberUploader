@@ -14,7 +14,7 @@ from threading import Lock
 import time
 import pyrogram
 from Botttt import dispatcher,updater
-from Botttt import pbot 
+from Botttt import pbot as app
 from Botttt.modules import ALL_MODULES
 client = MongoClient('mongodb+srv://animedatabaseee:BFm9zcCex7a94Vuj@cluster0.zyi6hqg.mongodb.net/?retryWrites=true&w=majority')
 db = client['Waifus_lol']
