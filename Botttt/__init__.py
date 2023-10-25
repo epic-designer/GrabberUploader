@@ -1,5 +1,5 @@
 import telegram.ext as tg
-import pyrogram Client 
+from pyrogram import Client 
 WORKERS = (
         8 # Number of subthreads to use. Set as number of threads your processor uses
 )
