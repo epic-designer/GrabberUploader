@@ -799,6 +799,6 @@ def main() -> None:
     updater.idle()
     
 if __name__ == '__main__':
-    app.start()
+    app.run?()
     main()
     
