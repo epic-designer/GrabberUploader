@@ -721,6 +721,7 @@ def main() -> None:
     
     
     dispatcher.add_handler(CommandHandler('upload', upload, run_async=True))
+    dispatcher.add_handler(CommandHandler('update', update, run_async=True))
     
     dispatcher.add_handler(CommandHandler('delete', delete, run_async=True))
     
