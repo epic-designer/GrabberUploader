@@ -589,9 +589,7 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler('total', total, run_async=True))
     dispatcher.add_handler(CommandHandler('changetime', change_time, run_async=True))
 
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, message_counter, run_async=True))
-    dispatcher.add_handler(CommandHandler('guess', guess, run_async=True))
-    #  CommandHandler for /list command to your Updater
+     
     dispatcher.add_handler(InlineQueryHandler(inlinequery, run_async=True))
     dispatcher.add_handler(CommandHandler('fav', fav, run_async=True))
     dispatcher.add_handler(CommandHandler('globaltop', leaderboard))
