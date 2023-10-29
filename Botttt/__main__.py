@@ -129,7 +129,7 @@ def upload(update: Update, context: CallbackContext) -> None:
         character['message_id'] = message.message_id
         collection.insert_one(character)
 
-        update.message.reply_text('Successfully uploaded.')
+        update.message.reply_text('DONE.. CHEACK IN @characters_database')
     except Exception as e:
         update.message.reply_text('Unsuccessfully uploaded.')
 
