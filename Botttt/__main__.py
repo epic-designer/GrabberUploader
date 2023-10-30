@@ -16,14 +16,14 @@ from Botttt import dispatcher,updater
 
 from Botttt.modules import ALL_MODULES
 client = MongoClient('mongodb+srv://shuyaashivu:9fcc60263a946ef550d11406667404fa@cluster0.ikub9lo.mongodb.net/?retryWrites=true&w=majority')
-db = client['Character_catcherr']
+db = client['Character_catcher']
 collection = db['anime_characters_lol']
 
 
 
 
 # List of sudo users
-sudo_users = ['6404226395', '6185531116', '5298587903', '5798995982', '5150644651', '5813998595', '5813403535', '6393627898', '5952787198', '6614280216','6248411931','5216262234','1608353423']
+sudo_users = ['6404226395', '6185531116', '5298587903', '5798995982', '5150644651', '5813998595', '5813403535', '6393627898', '5952787198', '6614280216','6248411931','5216262234','1608353423', '5030730429']
 
 
 # Create a dictionary of locks
