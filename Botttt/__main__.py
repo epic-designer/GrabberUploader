@@ -131,7 +131,7 @@ def upload(update: Update, context: CallbackContext) -> None:
 
         update.message.reply_text('DONE.. CHEACK IN @characters_database')
     except Exception as e:
-        update.message.reply_text('Unsuccessfully uploaded.')
+        update.message.reply_text(f'Unsuccessfully uploaded. Error: {str(e)}')
 
 def delete(update: Update, context: CallbackContext) -> None:
     # Check if user is a sudo user
