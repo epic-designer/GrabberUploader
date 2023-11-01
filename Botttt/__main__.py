@@ -15,7 +15,7 @@ import time
 from Botttt import dispatcher,updater
 
 from Botttt.modules import ALL_MODULES
-client = MongoClient('mongodb+srv://shuyaashivu:9fcc60263a946ef550d11406667404fa@cluster0.ikub9lo.mongodb.net/?retryWrites=true&w=majority')
+client = MongoClient('mongodb+srv://shuyaaaaa12:NvpoBuRp7MVPcAYA@cluster0.q2yycqx.mongodb.net/')
 db = client['Character_catcher']
 collection = db['anime_characters_lol']
 
