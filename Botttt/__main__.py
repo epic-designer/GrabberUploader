@@ -196,6 +196,73 @@ def total(update: Update, context: CallbackContext) -> None:
 
 
 
+def update(update: Update, context: CallbackContext) -> None:
+    # Check if user is a sudo user
+    if str(update.effective_user.id) not in sudo_users:
+        update.message.reply_text('You do not have permission to use this command.')
+        return
+
+    try:
+        # Extract arguments
+        args = context.args
+        if len(args) < 2:
+            update.message.reply_text('Incorrect format. Please use: /update <character_id> field : value ...')
+            return
+
+        # Parse arguments into a dictionary
+        fields = dict(arg.split(' : ', 1) for arg in args[1:])
+
+        # Validate and process fields
+        for field, value in fields.items():
+            if field == 'img_url':
+                # Check if image URL is valid
+                try:
+                    urllib.request.urlopen(value)
+                except:
+                    update.message.reply_text('Invalid image URL.')
+                    return
+            elif field in ['character_name', 'anime_name']:
+                # Replace '-' with ' ' and convert to title case
+                fields[field] = value.replace('-', ' ').title()
+            elif field == 'rarity':
+                # Check if rarity is valid
+                rarity_map = {1: "⚪ Common", 2: "🟣 Rare", 3: "🟡 Legendary", 4: "🟢 Medium"}
+                try:
+                    fields[field] = rarity_map[int(value)]
+                except KeyError:
+                    update.message.reply_text('Invalid rarity. Please use 1, 2, 3, or 4.')
+                    return
+
+        # Find character with given ID and update fields
+        character = collection.find_one_and_update(
+            {'id': args[0]},
+            {'$set': fields},
+            return_document=ReturnDocument.AFTER
+        )
+
+        if character:
+            # Delete old message from channel
+            try:
+                context.bot.delete_message(chat_id='-1001915956222', message_id=character['message_id'])
+            except:
+                update.message.reply_text('Failed to delete old message from channel, but character updated successfully.')
+
+            # Send updated character to channel
+            message = context.bot.send_photo(
+                chat_id='-1001915956222',
+                photo=character['img_url'],
+                caption=f'<b>Character Name:</b> {character["name"]}\n<b>Anime Name:</b> {character["anime"]}\n<b>Rarity:</b> {character["rarity"]}\n<b>ID:</b> {character["id"]}\nUpdated by <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a>',
+                parse_mode='HTML'
+            )
+
+            # Update message_id in database
+            collection.update_one({'id': args[0]}, {'$set': {'message_id': message.message_id}})
+
+            update.message.reply_text('Successfully updated.')
+        else:
+            update.message.reply_text('No character found with given ID.')
+    except Exception as e:
+        update.message.reply_text(f'Failed to update character. Error: {str(e)}')
 
 
 
@@ -213,6 +280,7 @@ def main() -> None:
     
     dispatcher.add_handler(CommandHandler('animee', anime, run_async=True))
     dispatcher.add_handler(CommandHandler('total', total, run_async=True))
+    dispatcher.add_handler(CommandHandler('update', update, run_async=True))
     
      
     
