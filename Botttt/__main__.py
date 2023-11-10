@@ -106,7 +106,7 @@ def upload(update: Update, context: CallbackContext) -> None:
             return
 
         # Generate ID
-        id = str(get_next_sequence_number('character_id')).zfill(4)
+        id = str(get_next_sequence_number('character_id')).zfill(2)
 
         # Insert new character
         character = {
