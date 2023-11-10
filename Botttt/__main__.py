@@ -193,9 +193,6 @@ def total(update: Update, context: CallbackContext) -> None:
         update.message.reply_text('Failed to fetch characters.')
 
 
-
-
-
 def update(update: Update, context: CallbackContext) -> None:
     # Check if user is a sudo user
     if str(update.effective_user.id) not in sudo_users:
@@ -210,7 +207,10 @@ def update(update: Update, context: CallbackContext) -> None:
             return
 
         # Parse arguments into a dictionary
-        fields = dict(arg.split(' : ', 1) for arg in args[1:])
+        fields = {}
+        for arg in args[1:]:
+            key, value = arg.split(' : ', 1)
+            fields[key] = value
 
         # Validate and process fields
         for field, value in fields.items():
@@ -263,7 +263,6 @@ def update(update: Update, context: CallbackContext) -> None:
             update.message.reply_text('No character found with given ID.')
     except Exception as e:
         update.message.reply_text(f'Failed to update character. Error: {str(e)}')
-
 
 
 
