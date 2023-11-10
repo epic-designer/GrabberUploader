@@ -202,71 +202,60 @@ def update(update: Update, context: CallbackContext) -> None:
     try:
         # Extract arguments
         args = context.args
-        if len(args) < 2:
-            update.message.reply_text('Incorrect format. Please use: /update <character_id> field : value ...')
+        if len(args) != 3:
+            update.message.reply_text('Incorrect format. Please use: /update id field new_value')
             return
 
-        # Parse arguments into a dictionary
-        fields = {}
-        for arg in args[1:]:
-            parts = arg.split(' : ')
-            if len(parts) == 2:
-                key, value = parts
-                fields[key] = value
+        # Get character by ID
+        character = collection.find_one({'id': args[0]})
+        if not character:
+            update.message.reply_text('Character not found.')
+            return
 
-        
+        # Check if field is valid
+        valid_fields = ['img_url', 'name', 'anime', 'rarity']
+        if args[1] not in valid_fields:
+            update.message.reply_text(f'Invalid field. Please use one of the following: {", ".join(valid_fields)}')
+            return
 
-        # Validate and process fields
-        for field, value in fields.items():
-            if field == 'img_url':
-                # Check if image URL is valid
-                try:
-                    urllib.request.urlopen(value)
-                except:
-                    update.message.reply_text('Invalid image URL.')
-                    return
-            elif field in ['character_name', 'anime_name']:
-                # Replace '-' with ' ' and convert to title case
-                fields[field] = value.replace('-', ' ').title()
-            elif field == 'rarity':
-                # Check if rarity is valid
-                rarity_map = {1: "⚪ Common", 2: "🟣 Rare", 3: "🟡 Legendary", 4: "🟢 Medium"}
-                try:
-                    fields[field] = rarity_map[int(value)]
-                except KeyError:
-                    update.message.reply_text('Invalid rarity. Please use 1, 2, 3, or 4.')
-                    return
-
-        # Find character with given ID and update fields
-        character = collection.find_one_and_update(
-            {'id': args[0]},
-            {'$set': fields},
-            return_document=ReturnDocument.AFTER
-        )
-
-        if character:
-            # Delete old message from channel
+        # Update field
+        if args[1] in ['name', 'anime']:
+            new_value = args[2].replace('-', ' ').title()
+        elif args[1] == 'rarity':
+            rarity_map = {1: "⚪ Common", 2: "🟣 Rare", 3: "🟡 Legendary", 4: "🟢 Medium"}
             try:
-                context.bot.delete_message(chat_id='-1001915956222', message_id=character['message_id'])
-            except:
-                update.message.reply_text('Failed to delete old message from channel, but character updated successfully.')
+                new_value = rarity_map[int(args[2])]
+            except KeyError:
+                update.message.reply_text('Invalid rarity. Please use 1, 2, 3, or 4.')
+                return
+        else:
+            new_value = args[2]
 
-            # Send updated character to channel
+        collection.find_one_and_update({'id': args[0]}, {'$set': {args[1]: new_value}})
+
+        # If the image URL is updated, delete the old message and send a new one
+        if args[1] == 'img_url':
+            context.bot.delete_message(chat_id='-1001915956222', message_id=character['message_id'])
             message = context.bot.send_photo(
                 chat_id='-1001915956222',
-                photo=character['img_url'],
+                photo=new_value,
+                caption=f'<b>Character Name:</b> {character["name"]}\n<b>Anime Name:</b> {character["anime"]}\n<b>Rarity:</b> {character["rarity"]}\n<b>ID:</b> {character["id"]}\nUpdated by <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a>',
+                parse_mode='HTML'
+            )
+            character['message_id'] = message.message_id
+            collection.find_one_and_update({'id': args[0]}, {'$set': {'message_id': message.message_id}})
+        else:
+            # Update message in channel
+            context.bot.edit_message_caption(
+                chat_id='-1001915956222',
+                message_id=character['message_id'],
                 caption=f'<b>Character Name:</b> {character["name"]}\n<b>Anime Name:</b> {character["anime"]}\n<b>Rarity:</b> {character["rarity"]}\n<b>ID:</b> {character["id"]}\nUpdated by <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a>',
                 parse_mode='HTML'
             )
 
-            # Update message_id in database
-            collection.update_one({'id': args[0]}, {'$set': {'message_id': message.message_id}})
-
-            update.message.reply_text('Successfully updated.')
-        else:
-            update.message.reply_text('No character found with given ID.')
+        update.message.reply_text('Character updated successfully.')
     except Exception as e:
-        update.message.reply_text(f'Failed to update character. Error: {str(e)}')
+        update.message.reply_text(f'Unsuccessfully updated. Error: {str(e)}')
 
 
 
