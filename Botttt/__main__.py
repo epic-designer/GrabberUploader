@@ -209,8 +209,12 @@ def update(update: Update, context: CallbackContext) -> None:
         # Parse arguments into a dictionary
         fields = {}
         for arg in args[1:]:
-            key, value = arg.split(' : ', 1)
-            fields[key] = value
+            parts = arg.split(' : ')
+            if len(parts) == 2:
+                key, value = parts
+                fields[key] = value
+
+        
 
         # Validate and process fields
         for field, value in fields.items():
