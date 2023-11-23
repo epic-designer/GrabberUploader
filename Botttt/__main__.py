@@ -15,7 +15,7 @@ import time
 from Botttt import dispatcher,updater
 
 from Botttt.modules import ALL_MODULES
-client = MongoClient('mongodb+srv://shuyaashivu:9fcc60263a946ef550d11406667404fa@cluster0.ikub9lo.mongodb.net/?retryWrites=true&w=majority')
+client = MongoClient('mongodb+srv://HaremDBBot:ThisIsPasswordForHaremDB@haremdb.swzjngj.mongodb.net/?retryWrites=true&w=majority')
 db = client['Character_catcher']
 collection = db['anime_characters_lol']
 
@@ -119,7 +119,7 @@ def upload(update: Update, context: CallbackContext) -> None:
         
         # Send message to channel
         message = context.bot.send_photo(
-            chat_id='-1001915956222',
+            chat_id='-1002064277119',
             photo=args[0],
             caption=f'<b>Character Name:</b> {character_name}\n<b>Anime Name:</b> {anime}\n<b>Rarity:</b> {rarity}\n<b>ID:</b> {id}\nAdded by <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a>',
             parse_mode='HTML'
@@ -151,7 +151,7 @@ def delete(update: Update, context: CallbackContext) -> None:
 
         if character:
             # Delete message from channel
-            context.bot.delete_message(chat_id='-1001915956222', message_id=character['message_id'])
+            context.bot.delete_message(chat_id='-1002064277119', message_id=character['message_id'])
             update.message.reply_text('Successfully deleted.')
         else:
             update.message.reply_text('No character found with given ID.')
@@ -235,7 +235,7 @@ def update(update: Update, context: CallbackContext) -> None:
 
         # If the image URL is updated, delete the old message and send a new one
         if args[1] == 'img_url':
-            context.bot.delete_message(chat_id='-1001915956222', message_id=character['message_id'])
+            context.bot.delete_message(chat_id='-1002064277119', message_id=character['message_id'])
             message = context.bot.send_photo(
                 chat_id='-1001915956222',
                 photo=new_value,
@@ -247,7 +247,7 @@ def update(update: Update, context: CallbackContext) -> None:
         else:
             # Update message in channel
             context.bot.edit_message_caption(
-                chat_id='-1001915956222',
+                chat_id='-1002064277119',
                 message_id=character['message_id'],
                 caption=f'<b>Character Name:</b> {character["name"]}\n<b>Anime Name:</b> {character["anime"]}\n<b>Rarity:</b> {character["rarity"]}\n<b>ID:</b> {character["id"]}\nUpdated by <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a>',
                 parse_mode='HTML'
