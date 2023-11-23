@@ -15,7 +15,7 @@ logging.getLogger("apscheduler").setLevel(logging.ERROR)
 logging.getLogger("pyrate_limiter").setLevel(logging.ERROR)
 LOGGER = logging.getLogger(__name__)
 
-TOKEN = "6829603360:AAGOYG5NZp4f0fVAx7Ipn7YMO-LtQRS7wIs"
+TOKEN = "6796551354:AAEiRLJhfWeGP5uP3cEGnLycx706q2xzmlw"
 updater = tg.Updater(
     token=TOKEN,
     workers=WORKERS,
