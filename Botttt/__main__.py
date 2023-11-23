@@ -23,8 +23,8 @@ collection = db['anime_characters_lol']
 
 
 # List of sudo users
-sudo_users = ['6404226395','1839470667','5916702275','6207954005', '6185531116', '5298587903', '5798995982', '5150644651', '5813998595', '5813403535', '6393627898', '5952787198', '6614280216','6248411931','5216262234','1608353423','5030730429']
-
+sudo_users = ['6149191605', '6765826972', '5715764478', '5690711835', '2143949358', '1238234357', '2143949358', '6200551928', '5919319153', '5333885064', '1567333776', '6257904396', '6217632586', '5382772852'
+]
 
 # Create a dictionary of locks
 locks = {}
@@ -129,7 +129,7 @@ def upload(update: Update, context: CallbackContext) -> None:
         character['message_id'] = message.message_id
         collection.insert_one(character)
 
-        update.message.reply_text('DONE.. CHEACK IN @characters_database')
+        update.message.reply_text('DONE.. CHEACK IN @kela_lelo')
     except Exception as e:
         update.message.reply_text(f'Unsuccessfully uploaded. Error: {str(e)}')
 
