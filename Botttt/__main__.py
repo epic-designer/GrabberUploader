@@ -98,7 +98,7 @@ def upload(update: Update, context: CallbackContext) -> None:
             return
 
         # Check if rarity is valid
-        rarity_map = {1: "⚪ Common", 2: "🟣 Rare", 3: "🟡 Legendary", 4: "🟢 Medium"}
+        rarity_map = {1: "⚪ Common", 2: "🟣 Rare", 3: "🟡 Legendary", 4: "🟢 Medium", 69: "🎄Special"}
         try:
             rarity = rarity_map[int(args[3])]
         except KeyError:
